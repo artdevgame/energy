@@ -62,11 +62,11 @@ export const loader: LoaderFunction = async () => {
   }).toString();
 
   const electric = await makeRequest<OctopusResponse>(
-    `/v1/electricity-meter-points/1419831212009/meters/19L3872886/consumption/?${queryParams}`
+    `/v1/electricity-meter-points/${process.env.ELECTRIC_MPAN}/meters/${process.env.ELECTRIC_SERIAL}/consumption/?${queryParams}`
   );
 
   const gas = await makeRequest<OctopusResponse>(
-    `/v1/gas-meter-points/2446149707/meters/E6S11948722061/consumption/?${queryParams}`
+    `/v1/gas-meter-points/${process.env.GAS_MPRN}/meters/${process.env.GAS_SERIAL}/consumption/?${queryParams}`
   );
 
   const dates = electric.results.map((reading) =>

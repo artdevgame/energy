@@ -1,62 +1,15 @@
-# Welcome to Remix!
+# 💡 - Energy
 
-- [Remix Docs](https://remix.run/docs)
-- [Netlify Functions](https://www.netlify.com/products/functions/)
+Monitoring energy use and cost at home.
 
-## Netlify Setup
+## 🤔 - Why?
 
-1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):
+With an incoming energy crisis getting embedded in the UK, I thought it was worth setting up a way to monitor my usage via the Octopus Energy API.
 
-```sh
-npm i -g netlify-cli
-```
+I like the dashboard Octopus provide, but the information is a little fragmented - for example, if I want to see usage by month, the maximum I can see is the past 12 before I have to configure a date filter. If I want to see how much energy cost, I have to work my way through bills.
 
-If you have previously installed the Netlify CLI, you should update it to the latest version:
+## ❕ - Caveats
 
-```sh
-npm i -g netlify-cli@latest
-```
+I think the way Octopus calculates usage is slightly different to how they present the numbers via the API. Mostly that dates slip slightly. The API will report on monthly figures between the 1st day and last of each month, whereas on the Octopus dashboard the bills can overlap months by a number of days.
 
-2. Sign up and log in to Netlify:
-
-```sh
-netlify login
-```
-
-3. Create a new site:
-
-```sh
-netlify init
-```
-
-## Development
-
-The Remix dev server starts your app in development mode, rebuilding assets on file changes. To start the Remix dev server:
-
-```sh
-npm run dev
-```
-
-Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
-
-The Netlify CLI builds a production version of your Remix App Server and splits it into Netlify Functions that run locally. This includes any custom Netlify functions you've developed. The Netlify CLI runs all of this in its development mode.
-
-```sh
-netlify dev
-```
-
-Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
-
-Note: When running the Netlify CLI, file changes will rebuild assets, but you will not see the changes to the page you are on unless you do a browser refresh of the page. Due to how the Netlify CLI builds the Remix App Server, it does not support hot module reloading.
-
-## Deployment
-
-There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
-
-```sh
-# preview deployment
-netlify deploy --build
-
-# production deployment
-netlify deploy --build --prod
-```
+Keep this in mind if you're using this repo and wondering why there's not a 1:1 alignment of numbers.
