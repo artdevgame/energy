@@ -1,9 +1,10 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { DateTime } from 'luxon';
 import { ConfigAnnotations } from '~/features/config/ConfigAnnotations';
 import { ConfigDirectDebits } from '~/features/config/ConfigDirectDebits';
 import { ConfigOctopus } from '~/features/config/ConfigOctopus';
-import { ConfigRates } from '~/features/config/ConfigRates';
+import { ConfigRates } from '~/features/config/ConfigRates/ConfigRates';
+import { ExportConfigButton } from '~/features/config/ExportConfigButton';
 import { UsageChart } from '~/features/UsageChart';
 import {
     getDirectDebitAmountForDate, getRatesForDate, makeRequest
@@ -16,9 +17,12 @@ import type { OctopusResponse, ReportTotal } from "./index.types";
 export default function Index() {
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-semibold">
-        💡 Energy Use (via Octopus Energy 🐙)
-      </h1>
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-16">
+        <h1 className="text-2xl font-semibold">
+          💡 Energy Use (via Octopus Energy 🐙)
+        </h1>
+        <ExportConfigButton />
+      </div>
       <section className="mt-8 mb-16">
         <UsageChart />
       </section>
@@ -48,6 +52,11 @@ export default function Index() {
     </div>
   );
 }
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  return Object.fromEntries(formData);
+};
 
 export const loader: LoaderFunction = async () => {
   const dd: number[] = [];

@@ -1,4 +1,6 @@
-interface InputProps extends Partial<HTMLInputElement> {
+import type { InputHTMLAttributes } from "react";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
 }
@@ -9,6 +11,7 @@ export const Input = ({
   label,
   placeholder,
   type = "text",
+  ...rest
 }: InputProps) => {
   return (
     <div className={className}>
@@ -17,6 +20,7 @@ export const Input = ({
       </label>
       <div className="mt-1">
         <input
+          {...rest}
           type={type}
           name={id}
           id={id}

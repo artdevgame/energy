@@ -1,8 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
   variant?: "default" | "outline";
 }
 
@@ -15,11 +14,20 @@ const variants = {
 
 export const Button = ({
   children,
+  name,
   type = "button",
+  value,
   variant = "default",
+  ...rest
 }: ButtonProps) => {
   return (
-    <button type={type} className={variants[variant]}>
+    <button
+      name={name}
+      value={value}
+      type={type}
+      className={variants[variant]}
+      {...rest}
+    >
       {children}
     </button>
   );

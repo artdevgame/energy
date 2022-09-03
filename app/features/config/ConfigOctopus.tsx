@@ -1,11 +1,32 @@
+import { useEffect } from 'react';
+import { useOctopusConfig } from '~/hooks/useConfig';
 import { Button } from '~/ui/Button';
 import { Input } from '~/ui/Input';
 
-import { Form } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 
 export const ConfigOctopus = () => {
+  const formData = useActionData();
+  const { octopus, setOctopus } = useOctopusConfig();
+  useEffect(() => {
+    if (typeof formData === "undefined" || formData.form !== "octopus") return;
+
+    setOctopus({
+      apiKey: formData.apiKey,
+      electric: {
+        mpan: formData.electricMpan,
+        serial: formData.electricSerial,
+      },
+      gas: {
+        mprn: formData.gasMprn,
+        serial: formData.gasMprn,
+      },
+    });
+  }, [formData]);
+
   return (
     <Form method="post">
+      <input type="hidden" name="form" value="octopus" />
       <section className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900">
           🐙 Octopus Energy
@@ -26,43 +47,48 @@ export const ConfigOctopus = () => {
       </section>
       <div className="flex flex-col gap-4 mb-4">
         <Input
-          id="api-key"
+          id="apiKey"
           label="API Key"
           placeholder="sk_live_abcdefghijklmop1234"
+          defaultValue={octopus.apiKey}
         />
         <h3>Electric Meter</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <Input
             className="flex flex-grow flex-col"
-            id="electric-mpan"
+            id="electricMpan"
             label="MPAN"
             placeholder="1234567890"
+            defaultValue={octopus.electric.mpan}
           />
           <Input
             className="flex flex-grow flex-col"
-            id="electric-serial"
+            id="electricSerial"
             label="Serial Number"
             placeholder="19L123456"
+            defaultValue={octopus.electric.serial}
           />
         </div>
         <h3>Gas Meter</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <Input
             className="flex flex-grow flex-col"
-            id="gas-mprn"
+            id="gasMprn"
             label="MPRN"
             placeholder="0987654321"
+            defaultValue={octopus.gas.mprn}
           />
           <Input
             className="flex flex-grow flex-col"
-            id="gas-serial"
+            id="gasSerial"
             label="Serial Number"
             placeholder="E6S123456"
+            defaultValue={octopus.gas.serial}
           />
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="button">Save</Button>
+        <Button type="submit">Save</Button>
       </div>
     </Form>
   );
