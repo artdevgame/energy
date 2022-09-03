@@ -242,7 +242,7 @@ const annotations = {
     },
     scaleID: "x",
     type: "line",
-    value: "2020-07-31",
+    value: "2020-07-30",
   },
   smartMeter: {
     borderWidth: 2,
@@ -253,6 +253,6 @@ const annotations = {
     },
     scaleID: "x",
     type: "line",
-    value: "2020-07-31",
+    value: "2020-07-30",
   },
 };
