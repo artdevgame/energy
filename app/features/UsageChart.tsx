@@ -4,11 +4,11 @@ import {
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
+import { useAnnotationsConfig } from '~/hooks/useConfig';
+import { toKWh, useGraphData } from '~/hooks/useGraphData';
 import { Switch } from '~/ui/Switch';
 
-import { useLoaderData } from '@remix-run/react';
-
-import type { LoaderData } from "~/routes/index.types";
+import { useOctopusData } from './config/ConfigOctopus/octopusContext';
 
 ChartJS.register(
   CategoryScale,
@@ -22,18 +22,54 @@ ChartJS.register(
 );
 
 export const UsageChart = () => {
+  const { annotations: annotationsConfig } = useAnnotationsConfig();
   const [showAnnotations, setAnnotationsVisible] = useState(false);
-  const apiData = useLoaderData<LoaderData>();
-  const { dd, electric, gas, labels, totals } = apiData;
+  const [showCubicMetres, setCubicMetres] = useState(false);
+  const {
+    state: { electric, gas },
+  } = useOctopusData();
+  const { dd, labels, totals } = useGraphData();
 
   const billedAmounts = Object.values(totals).map((total) => total.combined);
+
+  const annotations = Object.entries(annotationsConfig).reduce(
+    (prev, [date, annotationsForDate]) => {
+      const current = annotationsForDate.reduce(
+        (prevA, annotation, annotationIndex) => {
+          const config = {
+            borderWidth: 2,
+            label: {
+              content: (ctx: any) => annotation,
+              display: true,
+              position: "end",
+            },
+            scaleID: "x",
+            type: "line",
+            value: date,
+          };
+
+          return {
+            ...prevA,
+            [`${date}-${annotationIndex}`]: config,
+          };
+        },
+        {}
+      );
+
+      return {
+        ...prev,
+        ...current,
+      };
+    },
+    {}
+  );
 
   const data = {
     labels,
     datasets: [
       {
         label: "Electric",
-        data: electric.results.map((reading) => reading.consumption),
+        data: electric?.map((reading) => reading.consumption),
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
         tension: 0.4,
@@ -48,20 +84,24 @@ export const UsageChart = () => {
       },
       {
         label: "Gas",
-        data: gas.results.map((reading) => reading.consumption),
+        data: gas?.map((reading) =>
+          showCubicMetres ? reading.consumption : toKWh(reading.consumption)
+        ),
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         tension: 0.4,
         tooltip: {
           callbacks: {
             label: (config: any) =>
-              `${config.dataset.label}: ${config.formattedValue} m3`,
+              `${config.dataset.label}: ${config.formattedValue} ${
+                showCubicMetres ? "m3" : "kWh"
+              }`,
             afterLabel: (config: any) => `Total: ~£${totals[config.label].gas}`,
           },
         },
       },
       {
-        label: "Combined",
+        label: "Combined Cost",
         data: billedAmounts,
         tension: 0.4,
         borderColor: "rgb(163, 230, 53)",
@@ -80,8 +120,7 @@ export const UsageChart = () => {
         backgroundColor: "rgba(255,215,0, 0.5)",
         tooltip: {
           callbacks: {
-            label: (config: any) =>
-              `${config.dataset.label}: £${config.raw.toFixed(2)}`,
+            label: (config: any) => `${config.dataset.label}: £${config.raw}`,
           },
         },
       },
@@ -105,14 +144,23 @@ export const UsageChart = () => {
         },
       },
     }),
-    [showAnnotations]
+    [showAnnotations, annotations]
   );
+
+  if (!electric.length && !gas.length) {
+    return <UsageChartSkeleton />;
+  }
 
   return (
     <div>
-      <section className="mb-4">
+      <section className="mb-4 flex justify-between">
         <Switch enabled={showAnnotations} onChange={setAnnotationsVisible}>
           Show Annotations
+        </Switch>
+        <Switch enabled={showCubicMetres} onChange={setCubicMetres}>
+          <>
+            Display gas in m<sup>3</sup>
+          </>
         </Switch>
       </section>
       <Line data={data} options={options} />
@@ -120,27 +168,9 @@ export const UsageChart = () => {
   );
 };
 
-const annotations = {
-  boiler: {
-    borderWidth: 2,
-    label: {
-      content: (ctx: any) => "2020-05-11: Boiler Installed",
-      display: true,
-      position: "end",
-    },
-    scaleID: "x",
-    type: "line",
-    value: "2020-07-31",
-  },
-  smartMeter: {
-    borderWidth: 2,
-    label: {
-      content: (ctx: any) => "2020-07-09: Smart Meter Installed",
-      display: true,
-      position: "start",
-    },
-    scaleID: "x",
-    type: "line",
-    value: "2020-07-31",
-  },
-};
+export const UsageChartSkeleton = () => (
+  <div className="w-full aspect-video bg-gray-100 flex flex-col items-center justify-center">
+    <p className="text-xl text-gray-700">Waiting for data</p>
+    <p className="text-sm text-gray-500">(configure settings below)</p>
+  </div>
+);

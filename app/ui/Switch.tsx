@@ -1,7 +1,9 @@
 import { Switch as HeadlessSwitch } from '@headlessui/react';
 
+import type { ReactNode } from "react";
+
 interface SwitchProps {
-  children: string;
+  children: ReactNode;
   enabled: boolean;
   onChange(enabled: boolean): void;
 }

@@ -1,11 +1,14 @@
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import { Toaster } from 'react-hot-toast';
+
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
+import { OctopusProvider } from './features/config/ConfigOctopus/octopusContext';
 import styles from './styles/app.css';
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Energy consumption",
+  title: "Home Energy Use",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -21,10 +24,15 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <div>
+          <Toaster />
+        </div>
+        <OctopusProvider>
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </OctopusProvider>
       </body>
     </html>
   );

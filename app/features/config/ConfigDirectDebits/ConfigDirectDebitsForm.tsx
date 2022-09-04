@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { useDirectDebitConfig } from '~/hooks/useConfig';
+import { useGraphData } from '~/hooks/useGraphData';
 import { Button } from '~/ui/Button';
 import { Input } from '~/ui/Input';
 import { Select } from '~/ui/Select';
 
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 
 import { DirectDebitList } from './DirectDebitList';
 
-import type { LoaderData } from "~/routes/index.types";
-export const ConfigDirectDebits = () => {
+export const ConfigDirectDebitsForm = () => {
   const formData = useActionData();
-  const { labels } = useLoaderData<LoaderData>();
+  const { labels } = useGraphData();
   const { directDebits, setDirectDebits } = useDirectDebitConfig();
 
   useEffect(() => {

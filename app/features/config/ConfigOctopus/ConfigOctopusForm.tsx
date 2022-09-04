@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useOctopusConfig } from '~/hooks/useConfig';
 import { Button } from '~/ui/Button';
 import { Input } from '~/ui/Input';
 
 import { Form, useActionData } from '@remix-run/react';
 
-export const ConfigOctopus = () => {
+export const ConfigOctopusForm = () => {
   const formData = useActionData();
   const { octopus, setOctopus } = useOctopusConfig();
+
   useEffect(() => {
     if (typeof formData === "undefined" || formData.form !== "octopus") return;
 
@@ -19,9 +21,11 @@ export const ConfigOctopus = () => {
       },
       gas: {
         mprn: formData.gasMprn,
-        serial: formData.gasMprn,
+        serial: formData.gasSerial,
       },
     });
+
+    toast.success("Settings saved");
   }, [formData]);
 
   return (

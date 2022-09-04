@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
+    "@heroicons/react": "^2.0.10",
     "@netlify/functions": "^1.0.0",
     "@remix-run/netlify": "^1.7.0",
     "@remix-run/node": "^1.7.0",
@@ -22,7 +23,9 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
-    "use-local-storage-state": "^18.1.1"
+    "react-hot-toast": "^2.3.0",
+    "use-local-storage-state": "^18.1.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.7.0",

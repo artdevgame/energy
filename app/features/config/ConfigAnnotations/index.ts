@@ -1,1 +1,1 @@
-export * from './ConfigAnnotations';
+export * from './ConfigAnnotationsForm';

@@ -1,14 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useRatesConfig } from '~/hooks/useConfig';
+import { useGraphData } from '~/hooks/useGraphData';
 import { Button } from '~/ui/Button';
 import { Input } from '~/ui/Input';
 import { Select } from '~/ui/Select';
 
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 
 import { RatesList } from './RatesList';
-
-import type { LoaderData } from "~/routes/index.types";
 
 interface FormData {
   form: string;
@@ -19,9 +18,9 @@ interface FormData {
   gasUnitRate: number;
 }
 
-export const ConfigRates = () => {
+export const ConfigRatesForm = () => {
   const formData = useActionData<FormData>();
-  const { labels } = useLoaderData<LoaderData>();
+  const { labels } = useGraphData();
   const { rates, setRates } = useRatesConfig();
   const formRef = useRef<HTMLFormElement>(null);
 

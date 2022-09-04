@@ -1,1 +1,1 @@
-export * from './ConfigRates'
+export * from './ConfigRatesForm'

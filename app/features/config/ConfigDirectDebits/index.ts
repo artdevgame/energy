@@ -1,1 +1,1 @@
-export * from './ConfigDirectDebits'
+export * from './ConfigDirectDebitsForm'

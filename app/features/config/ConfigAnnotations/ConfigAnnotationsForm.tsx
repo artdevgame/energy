@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { useAnnotationsConfig } from '~/hooks/useConfig';
+import { useGraphData } from '~/hooks/useGraphData';
 import { Button } from '~/ui/Button';
 import { Input } from '~/ui/Input';
 import { Select } from '~/ui/Select';
 
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 
 import { AnnotationsList } from './AnnotationsList';
 
-import type { LoaderData } from "~/routes/index.types";
-export const ConfigAnnotations = () => {
+export const ConfigAnnotationsForm = () => {
   const formData = useActionData();
-  const { labels } = useLoaderData<LoaderData>();
+  const { labels } = useGraphData();
   const { annotations, setAnnotations } = useAnnotationsConfig();
   const formRef = useRef<HTMLFormElement>(null);
 

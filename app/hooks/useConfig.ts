@@ -1,4 +1,6 @@
+import type { InferType } from 'yup';
 import useLocalStorageState from 'use-local-storage-state';
+import { object, string } from 'yup';
 
 type ISODate = string;
 
@@ -7,26 +9,30 @@ interface EnergyRate {
   unitRate: number;
 }
 
+export interface Rate {
+  electric: EnergyRate;
+  gas: EnergyRate;
+}
+
 export type ConfigAnnotations = Record<ISODate, string[]>;
 
 export type ConfigDirectDebits = Record<ISODate, number>;
 
-export type ConfigRates = Record<ISODate, {
-  electric: EnergyRate;
-  gas: EnergyRate;
-}>;
+export type ConfigRates = Record<ISODate, Rate>;
 
-export interface ConfigOctopus {
-  apiKey: string;
-  electric: {
-    mpan: string;
-    serial: string;
-  };
-  gas: {
-    mprn: string;
-    serial: string;
-  };
-}
+export const configOctopusSchema = object({
+  apiKey: string().trim().required(),
+  electric: object({
+    mpan: string().trim().required(),
+    serial: string().trim().required(),
+  }).required(),
+  gas: object({
+    mprn: string().trim().required(),
+    serial: string().trim().required(),
+  }).required()
+})
+
+export type ConfigOctopus = InferType<typeof configOctopusSchema>;
 
 const ns = 'energy.highsnr.dev';
 
@@ -54,7 +60,6 @@ export const useOctopusConfig = () => {
       gas: { mprn: '', serial: '' },
     }
   })
-
   return { octopus, setOctopus }
 }
 
