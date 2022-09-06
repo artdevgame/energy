@@ -1,24 +1,24 @@
 import type { InferType } from 'yup';
 import useLocalStorageState from 'use-local-storage-state';
-import { object, string } from 'yup';
+import { array, lazy, number, object, string } from 'yup';
 
 type ISODate = string;
 
-interface EnergyRate {
-  standingCharge: number;
-  unitRate: number;
-}
+const energyRateSchema = object({
+  standingCharge: number().min(0),
+  unitRate: number().min(0),
+})
 
-export interface Rate {
-  electric: EnergyRate;
-  gas: EnergyRate;
-}
+const rateSchema = object({
+  electric: energyRateSchema.required(),
+  gas: energyRateSchema.required(),
+})
 
-export type ConfigAnnotations = Record<ISODate, string[]>;
+export const configAnnotationsSchema = lazy((isoDate: ISODate) => object({ [isoDate]: array().of(string().trim()) }))
 
-export type ConfigDirectDebits = Record<ISODate, number>;
+export const configDirectDebitsSchema = lazy((isoDate: ISODate) => object({ [isoDate]: number().min(0) }))
 
-export type ConfigRates = Record<ISODate, Rate>;
+export const configRatesSchema = lazy((isoDate: ISODate) => object({ [isoDate]: rateSchema }))
 
 export const configOctopusSchema = object({
   apiKey: string().trim().required(),
@@ -32,7 +32,19 @@ export const configOctopusSchema = object({
   }).required()
 })
 
+export type Rate = InferType<typeof rateSchema>;
+
+export type ConfigAnnotations = InferType<typeof configAnnotationsSchema>;
+export type ConfigDirectDebits = InferType<typeof configDirectDebitsSchema>;
+export type ConfigRates = InferType<typeof configRatesSchema>;
 export type ConfigOctopus = InferType<typeof configOctopusSchema>;
+
+export type Config = {
+  annotations: ConfigAnnotations;
+  directDebits: ConfigDirectDebits;
+  octopus: ConfigOctopus;
+  rates: ConfigRates;
+}
 
 const ns = 'energy.highsnr.dev';
 
@@ -72,15 +84,30 @@ export const useRatesConfig = () => {
 }
 
 export const useConfig = () => {
-  const { annotations } = useAnnotationsConfig();
-  const { directDebits } = useDirectDebitConfig();
-  const { octopus } = useOctopusConfig();
-  const { rates } = useRatesConfig();
+  const { annotations, setAnnotations } = useAnnotationsConfig();
+  const { directDebits, setDirectDebits } = useDirectDebitConfig();
+  const { octopus, setOctopus } = useOctopusConfig();
+  const { rates, setRates } = useRatesConfig();
+
+  const setConfig = async (config: Config) => {
+    await Promise.all([
+      configAnnotationsSchema.validate(config.annotations),
+      configDirectDebitsSchema.validate(config.directDebits),
+      configOctopusSchema.validate(config.octopus),
+      configRatesSchema.validate(config.rates),
+    ])
+
+    setAnnotations(config.annotations)
+    setDirectDebits(config.directDebits)
+    setOctopus(config.octopus)
+    setRates(config.rates);
+  }
 
   return {
     annotations,
     directDebits,
     octopus,
-    rates
-  }
+    rates,
+    setConfig
+  } as Config & { setConfig(config: Config): void };
 }

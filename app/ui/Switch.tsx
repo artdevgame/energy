@@ -1,15 +1,12 @@
+import { classNames } from '~/libs/classNames';
+
 import { Switch as HeadlessSwitch } from '@headlessui/react';
 
 import type { ReactNode } from "react";
-
 interface SwitchProps {
   children: ReactNode;
   enabled: boolean;
   onChange(enabled: boolean): void;
-}
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
 }
 
 export const Switch = ({ children, enabled, onChange }: SwitchProps) => {

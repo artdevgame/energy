@@ -32,21 +32,26 @@ export const UsageChart = () => {
 
   const billedAmounts = Object.values(totals).map((total) => total.combined);
 
+  let annotationY = 0;
+
   const annotations = Object.entries(annotationsConfig).reduce(
     (prev, [date, annotationsForDate]) => {
-      const current = annotationsForDate.reduce(
+      const current = annotationsForDate?.reduce(
         (prevA, annotation, annotationIndex) => {
           const config = {
-            borderWidth: 2,
+            borderWidth: 1,
             label: {
               content: (ctx: any) => annotation,
               display: true,
-              position: "end",
+              position: `${annotationY}%`,
             },
             scaleID: "x",
             type: "line",
             value: date,
           };
+
+          annotationY += 15;
+          if (annotationY >= 100) annotationY = 0;
 
           return {
             ...prevA,

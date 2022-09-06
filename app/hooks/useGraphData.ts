@@ -62,13 +62,16 @@ const getItemTotal = ({
   energyType: EnergyType;
   rates: Rate;
 }) => {
-  const supply = rates[energyType];
+  const supply = rates?.[energyType];
+
+  if (!supply) return 0;
+
   const kWh = energyType === 'gas' ? toKWh(consumed) : consumed
 
-  const energyCharge = Number(((supply.unitRate / 100) * kWh).toFixed(2));
+  const energyCharge = Number(((supply.unitRate! / 100) * kWh).toFixed(2));
 
   const standingCharge = Number(
-    ((supply.standingCharge / 100) * date.daysInMonth).toFixed(2)
+    ((supply.standingCharge! / 100) * date.daysInMonth).toFixed(2)
   );
 
   const subTotal = energyCharge + standingCharge;

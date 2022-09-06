@@ -2,10 +2,10 @@ import type { ActionFunction } from "@remix-run/node";
 import { useEffect } from 'react';
 import { ConfigAnnotationsForm } from '~/features/config/ConfigAnnotations';
 import { ConfigDirectDebitsForm } from '~/features/config/ConfigDirectDebits';
+import { ConfigMenu } from '~/features/config/ConfigMenu';
 import { ConfigOctopusForm } from '~/features/config/ConfigOctopus';
 import { useOctopusData } from '~/features/config/ConfigOctopus/octopusContext';
 import { ConfigRatesForm } from '~/features/config/ConfigRates';
-import { ExportConfigButton } from '~/features/config/ExportConfigButton';
 import { UsageChart } from '~/features/UsageChart';
 import { configOctopusSchema, useOctopusConfig } from '~/hooks/useConfig';
 import { makeRequest } from '~/services/octopus-energy/client';
@@ -27,10 +27,20 @@ export default function Index() {
     <div className="p-8">
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-16">
         <h1 className="text-2xl font-semibold">💡 Home Energy Use</h1>
-        <ExportConfigButton />
+        <ConfigMenu />
       </div>
       <section className="mt-8 mb-16">
         <UsageChart />
+      </section>
+      <section className="mb-16">
+        <Info>
+          Octopus calculates usage differently to how they present the numbers
+          via the API. The API will report on monthly figures between the first
+          and last day of each month, whereas bills can overlap months by a
+          number of days (depending on when your contract started). Keep this in
+          mind if you're using this app and wondering why there's not a 1:1
+          alignment of numbers.
+        </Info>
       </section>
       <div className="max-w-screen-lg">
         <section>
@@ -57,9 +67,7 @@ export default function Index() {
         <Info>
           Settings are saved to your browsers <strong>localstorage</strong>. No
           information is kept on the servers hosting this site. To avoid data
-          loss, you can use the 'export settings' button at the top of the
-          screen to keep a copy, eventually there will be a mechanism to import
-          them back.
+          loss, you can export and import settings from the menu at the top.
         </Info>
       </div>
     </div>
