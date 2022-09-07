@@ -23,12 +23,12 @@ export const configRatesSchema = lazy((isoDate: ISODate) => object({ [isoDate]: 
 export const configOctopusSchema = object({
   apiKey: string().trim().required(),
   electric: object({
-    mpan: string().trim().required(),
-    serial: string().trim().required(),
+    mpan: string().trim(),
+    serial: string().trim(),
   }).required(),
   gas: object({
-    mprn: string().trim().required(),
-    serial: string().trim().required(),
+    mprn: string().trim(),
+    serial: string().trim(),
   }).required()
 })
 

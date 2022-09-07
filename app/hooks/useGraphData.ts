@@ -37,7 +37,7 @@ export const useGraphData = () => {
     } as GraphData;
   }
 
-  const dates = getDates({ results: electric });
+  const dates = getDates({ results: electric.length ? electric : gas });
 
   const labels = getLabels({ dates });
   const dd = getValuesWithClosestDate<number>({ dates, config: directDebits });
@@ -91,19 +91,19 @@ const getTotals = ({ dates, electric, gas, rates }: { dates: DateTime[]; electri
     const date = dates[dateIndex];
     const ratesForDate = allRates[dateIndex];
 
-    const electricTotal = getItemTotal({
+    const electricTotal = electric[dateIndex] ? getItemTotal({
       consumed: electric[dateIndex].consumption,
       energyType: "electric",
       date,
       rates: ratesForDate
-    });
+    }) : 0;
 
-    const gasTotal = getItemTotal({
+    const gasTotal = gas[dateIndex] ? getItemTotal({
       consumed: gas[dateIndex].consumption,
       energyType: "gas",
       date,
       rates: ratesForDate
-    });
+    }) : 0;
 
     const combinedTotal = Number((electricTotal + gasTotal).toFixed(2));
 

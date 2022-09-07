@@ -93,18 +93,23 @@ async function queryOctopus(
       order_by: "period",
     }).toString();
 
-    const [electric, gas] = await Promise.all([
-      makeRequest<OctopusResponse>(
+    if (octopus.electric.mpan && octopus.electric.serial) {
+      // a user might not have electric, i.e single fuel
+      const electric = await makeRequest<OctopusResponse>(
         `/v1/electricity-meter-points/${octopus.electric.mpan}/meters/${octopus.electric.serial}/consumption/?${queryParams}`,
         { apiKey: octopus.apiKey }
-      ),
-      makeRequest<OctopusResponse>(
+      );
+      if (electric)
+        dispatch({ type: "setElectricResults", results: electric.results });
+    }
+
+    if (octopus.gas.mprn && octopus.gas.serial) {
+      // a user may not have gas, i.e. heat pump
+      const gas = await makeRequest<OctopusResponse>(
         `/v1/gas-meter-points/${octopus.gas.mprn}/meters/${octopus.gas.serial}/consumption/?${queryParams}`,
         { apiKey: octopus.apiKey }
-      ),
-    ]);
-
-    dispatch({ type: "setElectricResults", results: electric.results });
-    dispatch({ type: "setGasResults", results: gas.results });
+      );
+      if (gas) dispatch({ type: "setGasResults", results: gas.results });
+    }
   } catch (err) {}
 }

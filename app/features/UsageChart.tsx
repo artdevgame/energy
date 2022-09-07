@@ -162,11 +162,13 @@ export const UsageChart = () => {
         <Switch enabled={showAnnotations} onChange={setAnnotationsVisible}>
           Show Annotations
         </Switch>
-        <Switch enabled={showCubicMetres} onChange={setCubicMetres}>
-          <>
-            Display gas in m<sup>3</sup>
-          </>
-        </Switch>
+        {gas.length > 0 && (
+          <Switch enabled={showCubicMetres} onChange={setCubicMetres}>
+            <>
+              Display gas in m<sup>3</sup>
+            </>
+          </Switch>
+        )}
       </section>
       <Line data={data} options={options} />
     </div>
